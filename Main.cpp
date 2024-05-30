@@ -25,11 +25,6 @@ int main() {
 	//Tell GLFW we are using core profile, meaning we are only using the modern function.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-	GLfloat vertices[] = {
-		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f
-	};
 
 	//Creates window
 	GLFWwindow* window = glfwCreateWindow(1042, 796, "My OpenGl Game", NULL, NULL);
@@ -43,9 +38,10 @@ int main() {
 	//adds the window to the current context
 	glfwMakeContextCurrent(window);
 
+
 	//setup gl viewport
 	gladLoadGL();
-	glViewport(0, 0, 1042, 796);
+	glViewport(0, 0, 1024, 796);
 
 	//creates shaders
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -67,28 +63,50 @@ int main() {
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
 
-	GLuint VAO, VBO;
+	GLfloat vertices[] =
+	{
+		-0.5f, -0.5f, 0.0f, // Lower left corner
+		0.5f, -0.5f, 0.0f, // Lower right corner
+		0.0f, 0.5f * 1.23f, 0.0f, // Upper corner
+		-0.5f / 2, 0.5f / 8, 0.0f, // Inner left
+		0.5f / 2, 0.5f / 8, 0.0f, // Inner right
+		0.0f, -0.5f, 0.0f // Inner down
+	};
+
+	GLuint indices[] = {
+		0, 3, 5,
+		3, 2, 4,
+		5, 4, 1
+	};
+
+	GLuint VAO, VBO, EBO;
 
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 
 	glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);//binds the VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //introduce vertices into VBO
 
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	//configuer the vertex attribute.
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	//enables vertex attribute
 	glEnableVertexAttribArray(0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	//unbind vertex array and buffers
 	glBindVertexArray(0);
-
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	//add color to window
 	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glfwSwapBuffers(window);
-
 
 	while (!glfwWindowShouldClose(window)) {
 		//background color
@@ -100,7 +118,8 @@ int main() {
 
 		//draw verteces
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		//glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
 		//update window
 		glfwSwapBuffers(window);
@@ -110,6 +129,7 @@ int main() {
 
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 	glDeleteProgram(shaderProgram);
 
 	glfwDestroyWindow(window);
