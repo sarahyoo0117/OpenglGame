@@ -65,18 +65,33 @@ int main() {
 
 	GLfloat vertices[] =
 	{
-		-0.5f, -0.5f, 0.0f, // Lower left corner
-		0.5f, -0.5f, 0.0f, // Lower right corner
-		0.0f, 0.5f * 1.23f, 0.0f, // Upper corner
-		-0.5f / 2, 0.5f / 8, 0.0f, // Inner left
-		0.5f / 2, 0.5f / 8, 0.0f, // Inner right
-		0.0f, -0.5f, 0.0f // Inner down
+		-0.5f, -0.5f, 0.0f, //0
+		0.5f, -0.5f, 0.0f, //1
+		0.0f, (0.5f / 8 + 0.5f + 0.5f / 8), 0.0f, //2
+		-0.5f / 2, 0.5f / 8, 0.0f, //3
+		0.5f / 2, 0.5f / 8, 0.0f, //4
+		0.0f, -0.5f, 0.0f, //5
+		-0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //6
+		-0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //7
+		-0.5f / 2, -0.5f, 0.0f, //8
+		0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //9
+		0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //10
+		0.5f / 2, -0.5f, 0.0f, //11
+		-0.5f / 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f, //12
+		0.5f/ 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f, //13
+		0.0f, 0.5f / 8, 0.0f, //14
 	};
 
 	GLuint indices[] = {
-		0, 3, 5,
-		3, 2, 4,
-		5, 4, 1
+		0, 6, 8,
+		8, 7, 5,
+		6, 3, 7,
+		3, 12, 14,
+		12, 2, 13,
+		14, 13, 4,
+		9, 4, 10,
+		5, 9, 11,
+		11, 10, 1
 	};
 
 	GLuint VAO, VBO, EBO;
@@ -118,8 +133,7 @@ int main() {
 
 		//draw verteces
 		glBindVertexArray(VAO);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 
 		//update window
 		glfwSwapBuffers(window);
