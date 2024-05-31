@@ -4,17 +4,19 @@
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
-"out vec4 vertexColor;\n"
+"layout (location = 1) in vec3 aColor;\n"
+"out vec3 ourColor;\n"
 "void main()\n"
 "{\n"
 "   gl_Position = vec4(aPos, 1.0);\n"
+"	ourColor = aColor;"
 "}\0";
 const char* fragmentShaderSource = "#version 330 core\n"
+"in vec3 ourColor;\n"
 "out vec4 FragColor;\n"
-"uniform vec4 ourColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = ourColor;\n"
+"   FragColor = vec4(ourColor, 1.0);\n"
 "}\n\0";
 
 int main() {
@@ -66,22 +68,22 @@ int main() {
 	glDeleteShader(fragmentShader);
 
 	GLfloat vertices[] =
-	{	//positions			
-		-0.5f, -0.5f, 0.0f, //0
-		0.5f, -0.5f, 0.0f, //1
-		0.0f, (0.5f / 8 + 0.5f + 0.5f / 8), 0.0f, //2
-		-0.5f / 2, 0.5f / 8, 0.0f,//3
-		0.5f / 2, 0.5f / 8, 0.0f, //4
-		0.0f, -0.5f, 0.0f, //5
-		-0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //6
-		-0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //7
-		-0.5f / 2, -0.5f, 0.0f, //8
-		0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //9
-		0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //10
-		0.5f / 2, -0.5f, 0.0f, //11
-		-0.5f / 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f, //12
-		0.5f/ 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f, //13
-		0.0f, 0.5f / 8, 0.0f, //14
+	{	//positions				//color	
+		-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f, //0
+		0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,  //1
+		0.0f, (0.5f / 8 + 0.5f + 0.5f / 8), 0.0f,     0.0f, 0.0f, 1.0f,//2
+		-0.5f / 2, 0.5f / 8, 0.0f,    1.0f, 0.0f, 0.0f,//3
+		0.5f / 2, 0.5f / 8, 0.0f,     0.0f, 1.0f, 0.0f,//4
+		0.0f, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,//5
+		-0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f,      1.0f, 0.0f, 0.0f,//6
+		-0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f,     0.0f, 1.0f, 0.0f,//7
+		-0.5f / 2, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,//8
+		0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f,      1.0f, 0.0f, 0.0f,//9
+		0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f,      0.0f, 1.0f, 0.0f,//10
+		0.5f / 2, -0.5f, 0.0f,     0.0f, 0.0f, 1.0f,//11
+		-0.5f / 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f,     1.0f, 0.0f, 0.0f, //12
+		0.5f/ 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f,      0.0f, 1.0f, 0.0f,//13
+		0.0f, 0.5f / 8, 0.0f,     0.0f, 0.0f, 1.0f,//14
 	};
 
 	GLuint indices[] = {
@@ -110,10 +112,13 @@ int main() {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	//configuer the vertex attribute.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	//enables vertex attribute
+	//configure position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	//configure color attributes
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	//unbind vertex array and buffers
 	glBindVertexArray(0);
