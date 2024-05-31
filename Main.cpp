@@ -104,6 +104,8 @@ int main() {
 	VBO1.Unbind();
 	EBO1.Unbind();
 
+	GLuint uniformID = glGetUniformLocation(shaderProgram.ID, "scale");
+
 	while (!glfwWindowShouldClose(window)) {
 		//background color
 		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
@@ -115,6 +117,9 @@ int main() {
 		//shaderProgram.setUniformColor("ourColor", 1.0f, greenValue, 0.3f, 1.0f);
 
 		shaderProgram.Activate();
+
+		//adjusts the picture scale
+		glUniform1f(uniformID, 1.5);
 
 		//draw verteces
 		VAO1.Bind();
