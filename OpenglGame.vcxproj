@@ -137,6 +137,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="shaderClass.cpp" />
+    <ClCompile Include="stb.cpp" />
     <ClCompile Include="VAO.cpp" />
     <ClCompile Include="VBO.cpp" />
   </ItemGroup>
