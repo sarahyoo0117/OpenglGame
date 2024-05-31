@@ -7,6 +7,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
+#include "Texture.h"
 
 int main() {
 	//initialize GLFW
@@ -18,7 +19,6 @@ int main() {
 	//Tell GLFW we are using core profile, meaning we are only using the modern function.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-
 	//Creates window
 	GLFWwindow* window = glfwCreateWindow(1042, 796, "My OpenGl Game", NULL, NULL);
 
@@ -30,7 +30,6 @@ int main() {
 
 	//adds the window to the current context
 	glfwMakeContextCurrent(window);
-
 
 	//setup gl viewport
 	gladLoadGL();
@@ -74,63 +73,12 @@ int main() {
 
 	GLuint uniformID = glGetUniformLocation(shaderProgram.ID, "scale");
 
-	//texture
-	unsigned int texture0, texture1;
-	glGenTextures(1, &texture0);
-	glBindTexture(GL_TEXTURE_2D, texture0);
+	//textures
+	Texture texture0("container.jpg", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_RGB, GL_UNSIGNED_BYTE);
+	texture0.LinkToShader(shaderProgram, "texture0", 0);
 
-	//texture settings
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	//get images for texture0
-	int texWidth, texHeight, nrChannels;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load("container.jpg", &texWidth, &texHeight, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, texWidth, texHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		glEnable(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data); //deletes the image data as it is in Opengl texture object now
-	
-	//texture 1
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-	data = stbi_load("awesomeface.png", &texWidth, &texHeight, &nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texWidth, texHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
-
-	shaderProgram.Activate();
-
-	GLuint tex0Uni = glGetUniformLocation(shaderProgram.ID, "texture0");
-	glUniform1i(tex0Uni, 0);
-
-	GLuint tex1Uni = glGetUniformLocation(shaderProgram.ID, "texture1");
-	glUniform1i(tex1Uni, 1);
+	Texture texture1("awesomeface.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	texture1.LinkToShader(shaderProgram, "texture1", 1);
 
 
 	while (!glfwWindowShouldClose(window)) {
@@ -138,16 +86,17 @@ int main() {
 		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		shaderProgram.Activate();
+
 		//adjusts the picture scale
 		glUniform1f(uniformID, 1);
 
 		//activates textures
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture0);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture1);
-
-		shaderProgram.Activate();
+		texture0.Activate();
+		texture0.Bind();
+		
+		texture1.Activate();
+		texture1.Bind();
 
 		//draw verteces
 		VAO1.Bind();
@@ -163,6 +112,8 @@ int main() {
 	VBO1.Delete();
 	EBO1.Delete();
 	shaderProgram.Delete();
+	texture0.Delete();
+	texture1.Delete();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
