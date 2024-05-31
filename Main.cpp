@@ -4,15 +4,17 @@
 
 const char* vertexShaderSource = "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
+"out vec4 vertexColor;\n"
 "void main()\n"
 "{\n"
-"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+"   gl_Position = vec4(aPos, 1.0);\n"
 "}\0";
 const char* fragmentShaderSource = "#version 330 core\n"
 "out vec4 FragColor;\n"
+"uniform vec4 ourColor;\n"
 "void main()\n"
 "{\n"
-"   FragColor = vec4(1.0f, 0.5f, 0.02f, 1.0f);\n"
+"   FragColor = ourColor;\n"
 "}\n\0";
 
 int main() {
@@ -64,11 +66,11 @@ int main() {
 	glDeleteShader(fragmentShader);
 
 	GLfloat vertices[] =
-	{
+	{	//positions			
 		-0.5f, -0.5f, 0.0f, //0
 		0.5f, -0.5f, 0.0f, //1
 		0.0f, (0.5f / 8 + 0.5f + 0.5f / 8), 0.0f, //2
-		-0.5f / 2, 0.5f / 8, 0.0f, //3
+		-0.5f / 2, 0.5f / 8, 0.0f,//3
 		0.5f / 2, 0.5f / 8, 0.0f, //4
 		0.0f, -0.5f, 0.0f, //5
 		-0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //6
@@ -125,11 +127,15 @@ int main() {
 
 	while (!glfwWindowShouldClose(window)) {
 		//background color
-		glClearColor(0.10f, 0.13f, 0.37f, 1.0f);
+		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//init gl shader program
+		//update uniform color
+		float timeValue = glfwGetTime();
+		float colorValue = (sin(timeValue) / 2.0f) + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
 		glUseProgram(shaderProgram);
+		glUniform4f(vertexColorLocation, 1.0f, colorValue, 0.3f, 1.0f);
 
 		//draw verteces
 		glBindVertexArray(VAO);
