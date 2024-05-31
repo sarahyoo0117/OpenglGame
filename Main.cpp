@@ -3,6 +3,9 @@
 #include <GLFW/glfw3.h>
 
 #include "Shader.h"
+#include "VAO.h"
+#include "VBO.h"
+#include "EBO.h"
 
 int main() {
 	//initialize GLFW
@@ -85,38 +88,21 @@ int main() {
 		11, 10, 1
 	};
 
-	GLuint VAO, VBO, EBO;
+	VAO VAO1;
+	VAO1.Bind();
 
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	VBO VBO1(verticesWithColors, sizeof(verticesWithColors));
+	EBO EBO1(indices, sizeof(indices));
 
-	glBindVertexArray(VAO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);//binds the VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesWithColors), verticesWithColors, GL_STATIC_DRAW); //introduce vertices into VBO
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	//configure position attribute
+	//configure position & color attributes
 	const int numOfVertexArrayAttribs = 6; //for normal vertices, set it to be 3.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numOfVertexArrayAttribs * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-
-	//configure color attributes (only usable with verticesWithColors)
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, numOfVertexArrayAttribs * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, numOfVertexArrayAttribs * sizeof(float), (void *)0);
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, numOfVertexArrayAttribs * sizeof(float), (void*)(3 * sizeof(float)));
 
 	//unbind vertex array and buffers
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-	//add color to window
-	glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glfwSwapBuffers(window);
+	VAO1.Unbind();
+	VBO1.Unbind();
+	EBO1.Unbind();
 
 	while (!glfwWindowShouldClose(window)) {
 		//background color
@@ -131,7 +117,7 @@ int main() {
 		shaderProgram.Activate();
 
 		//draw verteces
-		glBindVertexArray(VAO);
+		VAO1.Bind();
 		glDrawElements(GL_TRIANGLES, sizeof(indices), GL_UNSIGNED_INT, 0);
 
 		//update window
@@ -140,9 +126,9 @@ int main() {
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	VAO1.Delete();
+	VBO1.Delete();
+	EBO1.Delete();
 	shaderProgram.Delete();
 
 	glfwDestroyWindow(window);
