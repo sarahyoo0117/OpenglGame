@@ -2,22 +2,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-const char* vertexShaderSource = "#version 330 core\n"
-"layout (location = 0) in vec3 aPos;\n"
-"layout (location = 1) in vec3 aColor;\n"
-"out vec3 ourColor;\n"
-"void main()\n"
-"{\n"
-"   gl_Position = vec4(aPos, 1.0);\n"
-"	ourColor = aColor;"
-"}\0";
-const char* fragmentShaderSource = "#version 330 core\n"
-"in vec3 ourColor;\n"
-"out vec4 FragColor;\n"
-"void main()\n"
-"{\n"
-"   FragColor = vec4(ourColor, 1.0);\n"
-"}\n\0";
+#include "Shader.h"
 
 int main() {
 	//initialize GLFW
@@ -47,27 +32,10 @@ int main() {
 	gladLoadGL();
 	glViewport(0, 0, 1024, 796);
 
-	//creates shaders
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
+	//Shader
+	Shader shaderProgram("shader.vert", "shader.frag");
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	//creates shader program
-	GLuint shaderProgram = glCreateProgram();
-
-	//attach thoes two shaders above to the program
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	GLfloat vertices[] =
+	GLfloat verticesWithColors[] =
 	{	//positions				//color	
 		-0.5f, -0.5f, 0.0f,     1.0f, 0.0f, 0.0f, //0
 		0.5f, -0.5f, 0.0f,      0.0f, 1.0f, 0.0f,  //1
@@ -84,6 +52,25 @@ int main() {
 		-0.5f / 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f,     1.0f, 0.0f, 0.0f, //12
 		0.5f/ 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f,      0.0f, 1.0f, 0.0f,//13
 		0.0f, 0.5f / 8, 0.0f,     0.0f, 0.0f, 1.0f,//14
+	};
+
+	GLfloat vertices[] =
+	{	//positions			
+		-0.5f, -0.5f, 0.0f, //0
+		0.5f, -0.5f, 0.0f, //1
+		0.0f, (0.5f / 8 + 0.5f + 0.5f / 8), 0.0f, //2
+		-0.5f / 2, 0.5f / 8, 0.0f,//3
+		0.5f / 2, 0.5f / 8, 0.0f, //4
+		0.0f, -0.5f, 0.0f, //5
+		-0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //6
+		-0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //7
+		-0.5f / 2, -0.5f, 0.0f, //8
+		0.5f / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //9
+		0.5f * 3 / 4, (0.5f / 8 - 0.5f) / 2, 0.0f, //10
+		0.5f / 2, -0.5f, 0.0f, //11
+		-0.5f / 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f, //12
+		0.5f / 4, ((0.5f / 8 + 0.5f + 0.5f / 8) + 0.5f / 8) / 2, 0.0f, //13
+		0.0f, 0.5f / 8, 0.0f, //14
 	};
 
 	GLuint indices[] = {
@@ -107,17 +94,18 @@ int main() {
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);//binds the VBO
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW); //introduce vertices into VBO
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verticesWithColors), verticesWithColors, GL_STATIC_DRAW); //introduce vertices into VBO
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//configure position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	const int numOfVertexArrayAttribs = 6; //for normal vertices, set it to be 3.
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, numOfVertexArrayAttribs * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//configure color attributes
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	//configure color attributes (only usable with verticesWithColors)
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, numOfVertexArrayAttribs * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
 
 	//unbind vertex array and buffers
@@ -135,12 +123,12 @@ int main() {
 		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//update uniform color
-		float timeValue = glfwGetTime();
-		float colorValue = (sin(timeValue) / 2.0f) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
-		glUseProgram(shaderProgram);
-		glUniform4f(vertexColorLocation, 1.0f, colorValue, 0.3f, 1.0f);
+		//update uniform color (only usable with vertices)
+		//float timeValue = glfwGetTime();
+		//float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
+		//shaderProgram.setUniformColor("ourColor", 1.0f, greenValue, 0.3f, 1.0f);
+
+		shaderProgram.Activate();
 
 		//draw verteces
 		glBindVertexArray(VAO);
@@ -155,7 +143,7 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-	glDeleteProgram(shaderProgram);
+	shaderProgram.Delete();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
