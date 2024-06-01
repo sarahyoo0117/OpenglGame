@@ -55,48 +55,47 @@ int main() {
 		0, 2, 1, //upper triangle
 		0, 3, 2  //lower triangle
 	};
-	const int numOfIndices = 6;
 
 	//3D Cube verteces
 	GLfloat cubeVertices[] =
-	{	
-		-0.5f, -0.5f, -0.5f, //0
-		-0.5f, 0.5f, -0.5f, //1
-		0.5f, 0.5f, -0.5f, //2
-		0.5f, -0.5f, -0.5f, //3
-		0.5f, -0.5f, 0.5f, //4
-		0.5f, 0.5f, 0.5f, //5
-		-0.5f, 0.5f, 0.5f, //6
-		-0.5f, -0.5f, 0.5f //7
+	{	// positions			// colors           // texture coords
+		-0.5f, -0.5f, -0.5f,	1.0f, 0.0f, 0.0f,	 0.0f, 0.0f,//0
+		-0.5f, 0.5f, -0.5f,		0.0f, 1.0f, 0.0f,	 1.0f, 1.0f,//1
+		0.5f, 0.5f, -0.5f,		0.0f, 0.0f, 1.0f,    1.0f, 1.0f,//2
+		0.5f, -0.5f, -0.5f,		1.0f, 1.0f, 0.0f,    1.0f, 0.0f,//3
+		0.5f, -0.5f, 0.5f,		1.0f, 0.0f, 0.0f,	 0.0f, 0.0f,//4
+		0.5f, 0.5f, 0.5f,		0.0f, 1.0f, 0.0f,	 0.0f, 1.0f,//5
+		-0.5f, 0.5f, 0.5f,		0.0f, 0.0f, 1.0f,    1.0f, 1.0f,//6
+		-0.5f, -0.5f, 0.5f,		1.0f, 1.0f, 0.0f,    1.0f, 0.0f //7
 	};
 
 	GLuint cubeIndices[] =
 	{
 		//side 1
 		0, 1, 2,
-		0, 2, 3,
+		2, 3, 0,
 		//side 2
-		3, 4, 2,
+		2, 3, 4,
 		4, 5, 2,
 		//side 3
-		4, 7, 1,
-		7, 6, 1,
+		4, 5, 6,
+		6, 7, 4,
 		//side 4
-		0, 7, 6,
-		6, 1, 0,
+		6, 7, 0,
+		0, 1, 6,
 		//side 5
-		1, 6, 5,
-		1, 2, 5,
-		//side 6
 		7, 0, 3,
-		7, 4, 3
+		3, 4, 7,
+		//side 6
+		1, 6, 5,
+		5, 2, 1
 	};
 
 	VAO VAO1;
 	VAO1.Bind();
 
-	VBO VBO1(vertices, sizeof(vertices));
-	EBO EBO1(indices, sizeof(indices));
+	VBO VBO1(cubeVertices, sizeof(cubeVertices));
+	EBO EBO1(cubeIndices, sizeof(cubeIndices));
 
 	//configure position, color, textureCoords attributes
 	const int numOfAttribsInaRow = 8;
@@ -119,10 +118,11 @@ int main() {
 	texture1.LinkToShader(shaderProgram, "texture1", 1);
 
 
+	glEnable(GL_DEPTH_TEST);
 	while (!glfwWindowShouldClose(window)) {
 		//background color
 		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		shaderProgram.Activate();
 
@@ -131,8 +131,8 @@ int main() {
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
 
-		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
 		projection = glm::perspective(glm::radians(45.0f), 1024.0f / 796.0f, 0.1f, 100.0f);
 
 		GLuint modelLocation = glGetUniformLocation(shaderProgram.ID, "model");
@@ -154,7 +154,7 @@ int main() {
 
 		//draw verteces
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, numOfIndices, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(cubeIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
 		//update window
 		glfwSwapBuffers(window);
