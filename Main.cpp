@@ -2,6 +2,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb/stb_image.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "Shader.h"
 #include "VAO.h"
@@ -38,7 +41,7 @@ int main() {
 	//Shader
 	Shader shaderProgram("shader.vert", "shader.frag");
 
-	//square vertices
+	//2D square vertices
 	GLfloat vertices[] =
 	{    // positions          // colors           // texture coords
 		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
@@ -53,6 +56,41 @@ int main() {
 		0, 3, 2  //lower triangle
 	};
 	const int numOfIndices = 6;
+
+	//3D Cube verteces
+	GLfloat cubeVertices[] =
+	{	
+		-0.5f, -0.5f, -0.5f, //0
+		-0.5f, 0.5f, -0.5f, //1
+		0.5f, 0.5f, -0.5f, //2
+		0.5f, -0.5f, -0.5f, //3
+		0.5f, -0.5f, 0.5f, //4
+		0.5f, 0.5f, 0.5f, //5
+		-0.5f, 0.5f, 0.5f, //6
+		-0.5f, -0.5f, 0.5f //7
+	};
+
+	GLuint cubeIndices[] =
+	{
+		//side 1
+		0, 1, 2,
+		0, 2, 3,
+		//side 2
+		3, 4, 2,
+		4, 5, 2,
+		//side 3
+		4, 7, 1,
+		7, 6, 1,
+		//side 4
+		0, 7, 6,
+		6, 1, 0,
+		//side 5
+		1, 6, 5,
+		1, 2, 5,
+		//side 6
+		7, 0, 3,
+		7, 4, 3
+	};
 
 	VAO VAO1;
 	VAO1.Bind();
@@ -88,8 +126,24 @@ int main() {
 
 		shaderProgram.Activate();
 
+		//create transformations using metrics
+		glm::mat4 model = glm::mat4(1.0f);
+		glm::mat4 view = glm::mat4(1.0f);
+		glm::mat4 projection = glm::mat4(1.0f);
+
+		model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -2.0f));
+		projection = glm::perspective(glm::radians(45.0f), 1024.0f / 796.0f, 0.1f, 100.0f);
+
+		GLuint modelLocation = glGetUniformLocation(shaderProgram.ID, "model");
+		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+		GLuint viewLocation = glGetUniformLocation(shaderProgram.ID, "view");
+		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
+		GLuint projectionMatUniLoc = glGetUniformLocation(shaderProgram.ID, "projection");
+		glUniformMatrix4fv(projectionMatUniLoc, 1, GL_FALSE, &projection[0][0]);
+
 		//adjusts the picture scale
-		glUniform1f(uniformID, 1);
+		glUniform1f(uniformID, 1.0);
 
 		//activates textures
 		texture0.Activate();
