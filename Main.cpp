@@ -91,6 +91,19 @@ int main() {
 		5, 2, 1
 	};
 
+	glm::vec3 cubePositions[] = {
+		 glm::vec3(0.0f,  0.0f,  0.0f),
+		 glm::vec3(2.0f,  5.0f, -15.0f),
+		 glm::vec3(-1.5f, -2.2f, -2.5f),
+		 glm::vec3(-3.8f, -2.0f, -12.3f),
+		 glm::vec3(2.4f, -0.4f, -3.5f),
+		 glm::vec3(-1.7f,  3.0f, -7.5f),
+		 glm::vec3(1.3f, -2.0f, -2.5f),
+		 glm::vec3(1.5f,  2.0f, -2.5f),
+		 glm::vec3(1.5f,  0.2f, -1.5f),
+		 glm::vec3(-1.3f,  1.0f, -1.5f)
+	};
+
 	VAO VAO1;
 	VAO1.Bind();
 
@@ -127,16 +140,13 @@ int main() {
 		shaderProgram.Activate();
 
 		//create transformations using metrics
-		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 projection = glm::mat4(1.0f);
 
-		model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
+		//model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -6.0f));
 		projection = glm::perspective(glm::radians(45.0f), 1024.0f / 796.0f, 0.1f, 100.0f);
 
-		GLuint modelLocation = glGetUniformLocation(shaderProgram.ID, "model");
-		glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
 		GLuint viewLocation = glGetUniformLocation(shaderProgram.ID, "view");
 		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
 		GLuint projectionMatUniLoc = glGetUniformLocation(shaderProgram.ID, "projection");
@@ -154,7 +164,18 @@ int main() {
 
 		//draw verteces
 		VAO1.Bind();
-		glDrawElements(GL_TRIANGLES, sizeof(cubeIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		for (int i = 0; i < 10; i++) {
+			glm::mat4 model = glm::mat4(1.0f);
+			model = glm::translate(model, cubePositions[i]);
+			
+			float angle = 50.0f * (i + 1);
+			model = glm::rotate(model, (float)glfwGetTime() * glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+			
+			GLuint modelLocation = glGetUniformLocation(shaderProgram.ID, "model");
+			glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+			
+			glDrawElements(GL_TRIANGLES, sizeof(cubeIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
+		}
 
 		//update window
 		glfwSwapBuffers(window);
