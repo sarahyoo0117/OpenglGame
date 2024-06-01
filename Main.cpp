@@ -11,6 +11,7 @@
 #include "VBO.h"
 #include "EBO.h"
 #include "Texture.h"
+#include "Camera.h"
 
 int main() {
 	//initialize GLFW
@@ -23,7 +24,9 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	//Creates window
-	GLFWwindow* window = glfwCreateWindow(1042, 796, "My OpenGl Game", NULL, NULL);
+	const unsigned int windowWidth = 1042;
+	const unsigned int windowHeight = 796;
+	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "My OpenGl Game", NULL, NULL);
 
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window." << std::endl;
@@ -130,8 +133,13 @@ int main() {
 	Texture texture1("awesomeface.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 	texture1.LinkToShader(shaderProgram, "texture1", 1);
 
+	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
 
 	glEnable(GL_DEPTH_TEST);
+
+	float deltaTime = 0.0f;
+	float lastFrame = 0.0f;
+
 	while (!glfwWindowShouldClose(window)) {
 		//background color
 		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
@@ -139,19 +147,16 @@ int main() {
 
 		shaderProgram.Activate();
 
-		//create transformations using metrics
-		glm::mat4 view = glm::mat4(1.0f);
-		glm::mat4 projection = glm::mat4(1.0f);
+		//camera frame setup so that the speed is equal to all users
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+		camera.speed = 100.0f * deltaTime;
+		std::cout << camera.speed << std::endl;
 
-		//model = glm::rotate(model, (float)glfwGetTime() * glm::radians(-55.0f), glm::vec3(1.0f, 1.0f, 1.0f));
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -6.0f));
-		projection = glm::perspective(glm::radians(45.0f), 1024.0f / 796.0f, 0.1f, 100.0f);
-
-		GLuint viewLocation = glGetUniformLocation(shaderProgram.ID, "view");
-		glUniformMatrix4fv(viewLocation, 1, GL_FALSE, &view[0][0]);
-		GLuint projectionMatUniLoc = glGetUniformLocation(shaderProgram.ID, "projection");
-		glUniformMatrix4fv(projectionMatUniLoc, 1, GL_FALSE, &projection[0][0]);
-
+		camera.processInput(window);
+		camera.processMatrix(45.0f, 0.1f, 100.0f, shaderProgram, "cameraMatrix");
+		
 		//adjusts the picture scale
 		glUniform1f(uniformID, 1.0);
 
@@ -179,6 +184,7 @@ int main() {
 
 		//update window
 		glfwSwapBuffers(window);
+
 
 		glfwPollEvents();
 	}

@@ -7,14 +7,12 @@ out vec3 vertexColor;
 out vec2 TexCoord;
 
 uniform float scale;
+uniform mat4 cameraMatrix;
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
 
 void main()
 {
-	//**we read the multiplication from right to left
-   gl_Position = projection * view * model * vec4(aPos.x * scale, aPos.y * scale, aPos.z * scale, 1.0);
+   gl_Position = cameraMatrix * model * vec4(aPos.x * scale, aPos.y * scale, aPos.z * scale, 1.0);
    vertexColor = aColor;
    TexCoord = aTexCoord;
 }
