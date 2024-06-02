@@ -13,6 +13,13 @@
 #include "Texture.h"
 #include "Camera.h"
 
+const unsigned int windowWidth = 1024;
+const unsigned int windowHeight = 796;
+
+float fovAngle = 45.0f;
+float deltaTime, lastFrame = 0.0f;
+
+
 int main() {
 	//initialize GLFW
 	glfwInit();
@@ -24,8 +31,6 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
 	//Creates window
-	const unsigned int windowWidth = 1042;
-	const unsigned int windowHeight = 796;
 	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "My OpenGl Game", NULL, NULL);
 
 	if (window == NULL) {
@@ -36,13 +41,9 @@ int main() {
 
 	//adds the window to the current context
 	glfwMakeContextCurrent(window);
-
 	//setup gl viewport
 	gladLoadGL();
-	glViewport(0, 0, 1024, 796);
-
-	//Shader
-	Shader shaderProgram("shader.vert", "shader.frag");
+	glViewport(0, 0, windowWidth, windowHeight);
 
 	//2D square vertices
 	GLfloat vertices[] =
@@ -107,6 +108,9 @@ int main() {
 		 glm::vec3(-1.3f,  1.0f, -1.5f)
 	};
 
+	//Shader
+	Shader shaderProgram("shader.vert", "shader.frag");
+
 	VAO VAO1;
 	VAO1.Bind();
 
@@ -133,12 +137,9 @@ int main() {
 	Texture texture1("awesomeface.png", GL_TEXTURE_2D, GL_TEXTURE1, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 	texture1.LinkToShader(shaderProgram, "texture1", 1);
 
-	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
-
 	glEnable(GL_DEPTH_TEST);
 
-	float deltaTime = 0.0f;
-	float lastFrame = 0.0f;
+	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
 
 	while (!glfwWindowShouldClose(window)) {
 		//background color
@@ -147,15 +148,16 @@ int main() {
 
 		shaderProgram.Activate();
 
-		//camera frame setup so that the speed is equal to all users
+		//TODO:camera frame setup so that the speed is equal to all users
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		camera.speed = 100.0f * deltaTime;
-		std::cout << camera.speed << std::endl;
+		camera.speed = 25.0f * deltaTime; //TODO
+		//std::cout << camera.speed << std::endl;
 
-		camera.processInput(window);
-		camera.processMatrix(45.0f, 0.1f, 100.0f, shaderProgram, "cameraMatrix");
+		camera.processMatrix(fovAngle, 0.1f, 100.0f, shaderProgram, "cameraMatrix");
+		camera.processKeyboardInputs(window);
+		camera.processMouseInputs(window);
 		
 		//adjusts the picture scale
 		glUniform1f(uniformID, 1.0);
@@ -184,7 +186,6 @@ int main() {
 
 		//update window
 		glfwSwapBuffers(window);
-
 
 		glfwPollEvents();
 	}

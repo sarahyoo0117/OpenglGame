@@ -17,12 +17,17 @@ public:
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
 
 	int width, height;
-	float speed = 100.0f;
-	float sensivity = 100.0f;
+	float speed = 50.0f;
+	float sensitivity = 0.1f;
+	float yaw = -90.0f;
+	float pitch = 0.0f;
+	float lastX, lastY;
+	bool isFirstClick = true;
 
 	Camera(int width, int height, glm::vec3 position);
 	void processMatrix(float FOVangle, float near, float far, Shader& shader, const char* uniformName);
-	void processInput(GLFWwindow* window);
+	void processKeyboardInputs(GLFWwindow* window);
+	void processMouseInputs(GLFWwindow* window);
 };
 
 #endif
