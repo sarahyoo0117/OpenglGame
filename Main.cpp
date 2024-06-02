@@ -146,7 +146,22 @@ int main() {
 
 		//draw verteces
 		VAO1.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		//chunks
+		for (int i = 0; i < 5; i++)
+		{
+			for (int r = 0; r < 10 - 2 * i; r++) {
+				for (int c = 0; c < 10 - 2 * i; c++)
+				{
+					glm::mat4 model = glm::mat4(1.0f);
+					glm::vec3 position = glm::vec3(1.0f * c + i, 1.0f * i, 1.0f * r + i);
+					model = glm::translate(model, position);
+					GLuint modelLocation = glGetUniformLocation(shaderProgram.ID, "model");
+					glUniformMatrix4fv(modelLocation, 1, GL_FALSE, glm::value_ptr(model));
+					glDrawArrays(GL_TRIANGLES, 0, 36);
+				}
+			}
+		}
 		
 		//update window
 		glfwSwapBuffers(window);

@@ -78,10 +78,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="container.jpg">
-      <Filter>Resource Files\Textures</Filter>
-    </Image>
-    <Image Include="awesomeface.png">
+    <Image Include="Dirt_Block.png">
       <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
