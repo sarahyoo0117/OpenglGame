@@ -66,13 +66,14 @@ void Camera::processMouseInputs(GLFWwindow* window)
 		yaw += xOffset;
 		pitch += yOffset;
 
+		//TODO: Why does it cause a limit to x?
 		if (pitch > 89.0f)
 			pitch = 89.0f;
 		if (pitch < -89.0f)
 			pitch = -89.0f;
 
 		glm::vec3 direction;
-		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+		direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch)); 
 		direction.y = sin(glm::radians(pitch));
 		direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
 		Orientation = glm::normalize(direction);

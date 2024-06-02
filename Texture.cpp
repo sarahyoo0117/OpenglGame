@@ -30,7 +30,8 @@ Texture::Texture(const char* imagePath, GLenum texType, GLenum texSlot, GLenum i
 		std::cout << "Failed to load texture" << std::endl;
 	}
 
-	stbi_image_free(data); //deletes the image data since it is in Opengl texture object now
+	//deletes the image data since it is in Opengl texture object now
+	stbi_image_free(data); 
 	glBindTexture(texType, 0);
 }
 
