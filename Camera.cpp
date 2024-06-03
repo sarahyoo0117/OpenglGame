@@ -2,23 +2,27 @@
 
 Camera::Camera(int width, int height, glm::vec3 position)
 {
-	Camera::width = width;
-	Camera::height = height;
-	Position = position;
-	lastX = (float) width / 2;
-	lastY = (float) height / 2;
+	this->width = width;
+	this->height = height;
+	this->Position = position;
+	this->lastX = (float) width / 2;
+	this->lastY = (float) height / 2;
 }
 
-void Camera::processMatrix(float FOVangle, float near, float far, Shader& shader, const char* uniformName)
+void Camera::setMatrix(Shader& shader, const char* uniformName)
+{
+	glUniformMatrix4fv(glGetUniformLocation(shader.ID, uniformName), 1, GL_FALSE, glm::value_ptr(this->cameraMatrix));
+}
+
+void Camera::updateMatrix(float FOVangle, float nearPlane, float farPlane)
 {
 	glm::mat4 view = glm::mat4(1.0f);
 	glm::mat4 projection = glm::mat4(1.0f);
 
 	view = glm::lookAt(Position, Position + Orientation, Up);
-	projection = glm::perspective(glm::radians(FOVangle), (float)width / height, near, far);
+	projection = glm::perspective(glm::radians(FOVangle), (float)width / height, nearPlane, farPlane);
 
-	GLuint uniformLocation = glGetUniformLocation(shader.ID, uniformName);
-	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(projection * view));
+	this->cameraMatrix = projection * view;
 }
 
 void Camera::processKeyboardInputs(GLFWwindow* window)

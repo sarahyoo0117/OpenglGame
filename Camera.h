@@ -15,6 +15,7 @@ public:
 	glm::vec3 Position;
 	glm::vec3 Orientation = glm::vec3(0.0f, 0.0f, -0.1f);
 	glm::vec3 Up = glm::vec3(0.0f, 1.0f, 0.0f);
+	glm::mat4 cameraMatrix = glm::mat4(1.0f);
 
 	int width, height;
 	float speed = 50.0f;
@@ -25,7 +26,8 @@ public:
 	bool isFirstClick = true;
 
 	Camera(int width, int height, glm::vec3 position);
-	void processMatrix(float FOVangle, float near, float far, Shader& shader, const char* uniformName);
+	void setMatrix(Shader& shader, const char* uniformName);
+	void updateMatrix(float FOVangle, float nearPlane, float farPlane);
 	void processKeyboardInputs(GLFWwindow* window);
 	void processMouseInputs(GLFWwindow* window);
 };

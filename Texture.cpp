@@ -1,12 +1,13 @@
 #include "Texture.h"
 
-Texture::Texture(const char* imagePath, GLenum texType, GLenum texSlot, GLenum internalFormat, GLenum format, GLenum pixelType)
+Texture::Texture(const char* imagePath, const char* texName, GLuint slot, GLenum texType, GLenum internalFormat, GLenum imageFormat, GLenum pixelType)
 {
-	type = texType;
-	slot = texSlot;
+	this->name = texName;
+	this->type = texType;
+	this->unit = slot;
 
 	glGenTextures(1, &ID);
-	glActiveTexture(texSlot);
+	glActiveTexture(GL_TEXTURE0 + slot);
 	glBindTexture(texType, ID);
 
 	glTexParameteri(texType, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -21,7 +22,7 @@ Texture::Texture(const char* imagePath, GLenum texType, GLenum texSlot, GLenum i
 
 	if (data)
 	{
-		glTexImage2D(texType, 0, internalFormat, imgWidth, imgHeight, 0, format, pixelType, data);
+		glTexImage2D(texType, 0, internalFormat, imgWidth, imgHeight, 0, imageFormat, pixelType, data);
 		glGenerateMipmap(texType);
 		glEnable(texType);
 	}
@@ -35,20 +36,20 @@ Texture::Texture(const char* imagePath, GLenum texType, GLenum texSlot, GLenum i
 	glBindTexture(texType, 0);
 }
 
-void Texture::LinkToShader(Shader& shader, const char* uniformName, GLuint unit)
+void Texture::setTextureUnit(Shader& shader, const char* uniformName, GLuint unit)
 {
 	shader.Activate();
-	GLuint texUni = glGetUniformLocation(shader.ID, uniformName);
-	glUniform1i(texUni, unit);
+	glUniform1i(glGetUniformLocation(shader.ID, uniformName), unit);
 }
 
 void Texture::Activate()
 {
-	glActiveTexture(slot);
+	glActiveTexture(unit);
 }
 
 void Texture::Bind()
 {
+	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(type, ID);
 }
 

@@ -10,11 +10,12 @@ class Texture
 {
 public:
 	GLuint ID;
+	const char* name;
 	GLenum type;
-	GLenum slot;
+	GLuint unit;
 
-	Texture(const char* imagePath, GLenum texType, GLenum texSlot, GLenum internalFormat, GLenum format, GLenum piexlType);
-	void LinkToShader(Shader& shader, const char* uniformName, GLuint unit);
+	Texture(const char* imagePath, const char* texName, GLuint slot, GLenum texType, GLenum internalFormat, GLenum imageFormat, GLenum piexlType);
+	void setTextureUnit(Shader& shader, const char* uniformName, GLuint unit);
 	void Activate();
 	void Bind();
 	void Unbind();

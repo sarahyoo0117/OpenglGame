@@ -48,6 +48,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -68,12 +71,15 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="shader.frag">
+    <None Include="default.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
-    <None Include="shader.vert">
+    <None Include="default.vert">
       <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
