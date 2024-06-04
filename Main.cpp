@@ -35,48 +35,48 @@ int main() {
 	//3D Cube verteces
 	Vertex vertices[] =
 	{  //positions							//texture coords
+	   // Back
+	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
 	   // Front
+	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, 0.5),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
 	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 1.0f)},
 	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	   // Right
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 0.0f)},
-	   // Back
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(1.0f, 0.0f)},
 	   // Left
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
+	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
+	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	   // Right
+	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+	   // Bottom
+	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f,  0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
 	   // Top
 	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
 	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	   // Bottom
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 0.0f)}
+	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
+	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
+	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
 	};
 
 	Texture textures[] =
