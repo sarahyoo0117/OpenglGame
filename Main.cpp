@@ -95,8 +95,30 @@ int main() {
 	Mesh mesh(vertexVectors, textureVectors);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
 
-	while (!glfwWindowShouldClose(window)) {
+	double prevTime = 0.0;
+	double crntTime = 0.0;
+	double timeDiff;
+	unsigned int count = 0;
+
+	while (!glfwWindowShouldClose(window)){
+		//FPS counter
+		crntTime = glfwGetTime();
+		timeDiff = crntTime - prevTime;
+		count++;
+		if (timeDiff >= 1.0 / 30.0)
+		{
+			std::string FPS = std::to_string((1.0 / timeDiff) * count);
+			std::string ms = std::to_string((timeDiff / count) * 1000);
+			std::string newTitle = "My Opengl Game - " + FPS + "FPS / " + ms + "ms";
+			glfwSetWindowTitle(window, newTitle.c_str());
+			prevTime = crntTime;
+			count = 0;
+		}
+
 		//background color
 		glClearColor(0.2f, 0.13f, 0.37f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
