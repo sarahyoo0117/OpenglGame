@@ -1,4 +1,5 @@
-#include "Mesh.h"
+#include "Chunk.h"
+#include "Camera.h"
 
 const unsigned int windowWidth = 1440;
 const unsigned int windowHeight = 900;
@@ -84,15 +85,11 @@ int main() {
 		Texture("Dirt_Block.png", "block", 0, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)
 	};
 
-	//Shader
 	Shader shaderProgram("default.vert", "default.frag");
 	
 	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
 
-	std::vector<Vertex> vertexVectors(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-	std::vector<Texture> textureVectors(textures, textures + sizeof(textures) / sizeof(Texture));
-
-	Mesh mesh(vertexVectors, textureVectors);
+	Chunk chunk(shaderProgram);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -133,20 +130,10 @@ int main() {
 		camera.updateMatrix(fovAngle, 0.1f, 100.0f);
 		camera.processKeyboardInputs(window);
 		camera.processMouseInputs(window);
+		camera.setMatrix(shaderProgram, "cameraMatrix");
 
 		//chunk
-		for (int i = 0; i < 5; i++)
-		{
-			for (int r = 0; r < 10 - 2 * i; r++) 
-			{
-				for (int c = 0; c < 10 - 2 * i; c++)
-				{
-					glm::mat4 model = glm::mat4(1.0f);
-					glm::vec3 position = glm::vec3(1.0f * c + i, 1.0f * i, 1.0f * r + i);
-					mesh.Draw(shaderProgram, camera, model, position);
-				}
-			}
-		}
+		chunk.GenerateChunk(20, 20, 30);
 
 		//update window
 		glfwSwapBuffers(window);

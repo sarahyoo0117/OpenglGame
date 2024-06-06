@@ -15,7 +15,7 @@ Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<Texture>& textures)
 	VBO.Unbind();
 }
 
-void Mesh::Draw(Shader& shader, Camera& camera, glm::mat4 model, glm::vec3 position)
+void Mesh::Draw(Shader& shader, glm::mat4 model, glm::vec3 position)
 {
 	shader.Activate();
 	VAO.Bind();
@@ -36,7 +36,6 @@ void Mesh::Draw(Shader& shader, Camera& camera, glm::mat4 model, glm::vec3 posit
 	model = glm::translate(model, position);
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 	glUniform1f(glGetUniformLocation(shader.ID, "scale"), 1.0);
-	camera.setMatrix(shader, "cameraMatrix");
 
 	glDrawArrays(GL_TRIANGLES, 0, vertices.size()); //TODO:36 --> vertices.size()
 }

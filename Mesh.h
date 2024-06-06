@@ -5,11 +5,11 @@
 #include <glad/glad.h> 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <string>
 #include <vector>
 #include "Shader.h"
 #include "Texture.h"
-#include "Camera.h"
 #include "VAO.h"
 #include "VBO.h"
 
@@ -20,7 +20,7 @@ public:
 	std::vector<Texture> textures;
 
 	Mesh(std::vector<Vertex>& vertices, std::vector<Texture>& textures);
-	void Draw(Shader& shader, Camera& camera, glm::mat4 model, glm::vec3 position);
+	void Draw(Shader& shader, glm::mat4 model, glm::vec3 position);
 private:
 	VAO VAO;
 };
