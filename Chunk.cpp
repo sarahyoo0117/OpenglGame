@@ -1,74 +1,75 @@
 #include "Chunk.h"
 
-Chunk::Chunk(Shader& shader) : ShaderProgram(shader) {
-	Vertex vertices[] =
-	{  //positions							//texture coords
-	   // Back
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  // Front
-	 Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	 Vertex{glm::vec3(0.5f, -0.5f, 0.5),	glm::vec2(1.0f, 0.0f)},
-	 Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	 Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	 Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 1.0f)},
-	 Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	 // Left
-	Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	// Right
-	Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	// Bottom
-	Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, -0.5f,  0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	// Top
-	Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	};
+Chunk::Chunk(int width, int height, int depth, std::vector<Texture>& textures)
+{
+	this->WIDTH = width;
+	this->HEIGHT = height;
+	this->DEPTH = depth;
+	this->heightMap = generateChunk();
+	//this->chunkBlocks.resize(WIDTH, std::vector<std::vector<Voxel>>(DEPTH, std::vector<Voxel>(HEIGHT)));
 
-	Texture textures[] =
-	{
-		Texture("Dirt_Block.png", "block", 0, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)
-	};
-
-	std::vector<Vertex> vertexVectors(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
-	std::vector<Texture> textureVectors(textures, textures + sizeof(textures) / sizeof(Texture));
-	this->Block = new Mesh(vertexVectors, textureVectors);
+	this->textures = textures; //TODO: texture atlas
 }
 
-void Chunk::GenerateChunk(int width, int length, int height) {
-	Shader shaderProgram("default.vert", "default.frag");
+double** Chunk::generateChunk() { 
+	siv::PerlinNoise::seed_type seed = 123456u;
+	siv::PerlinNoise perlin{ seed };
 
-	for (int x = 0; x < width; x++) 
+	//allocate memory for height map
+	double** heightMap = new double* [WIDTH];
+
+	for (int i = 0; i < WIDTH; ++i) {
+		heightMap[i] = new double[DEPTH];
+	}
+
+	for (int x = 0; x < WIDTH; x++)
 	{
-		for (int z = 0; z < length; z++) 
+		for (int z = 0; z < HEIGHT; z++)
 		{
-			for (int y = 0; y < height; y++) 
+			heightMap[x][z] = perlin.octave2D_01(x, z, 4) * 10; //TODO::adjust number
+			std::cout << heightMap[x][z]  << std::endl;
+		}
+	}
+	return heightMap;
+}
+
+void Chunk::integrateFace(Shader& shader, Voxel& block, BlockFaces face)
+{
+	std::vector<Vertex> vertices = convertVertexToVector(face);
+	this->chunkVertices.insert(chunkVertices.begin(), vertices.begin(), vertices.end()); //TODO: Face Culling?
+	block.Draw(shader, vertices, this->textures);
+}
+
+void Chunk::generateBlocks(Shader& shader)
+{
+	for (int x = 0; x < WIDTH; x++)
+	{
+		for (int z = 0; z < HEIGHT; z++)
+		{
+			int columnHeight = (int)(heightMap[x][z]); //TODO:: generate chunk using peril noise
+			//std::cout << columnHeight << std::endl;
+			for (int y = 0; y < columnHeight; y++)
 			{
-				glm::mat4 model = glm::mat4(1.0f);
-				glm::vec3 position = glm::vec3(1.0f * x, 1.0f * y, 1.0f * z);
-				Block->Draw(this->ShaderProgram, model, position);
+				if (y < columnHeight)
+				{
+					Voxel block(glm::vec3(x, y, z), BlockType::DIRT);
+					//chunkBlocks[x][y][z] = block;
+
+					int numOfFaces = 0;
+
+					integrateFace(shader, block, BlockFaces::FRONT);
+					integrateFace(shader, block, BlockFaces::BACK);
+					integrateFace(shader, block, BlockFaces::LEFT);
+					integrateFace(shader, block, BlockFaces::RIGHT);
+					integrateFace(shader, block, BlockFaces::TOP);
+					integrateFace(shader, block, BlockFaces::BOTTOM);
+
+					numOfFaces += 6;
+				}
+				else
+				{
+					Voxel block(glm::vec3(x, y, z), BlockType::EMPTY);
+				}
 			}
 		}
 	}

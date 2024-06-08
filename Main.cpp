@@ -33,63 +33,17 @@ int main() {
 	gladLoadGL();
 	glViewport(0, 0, windowWidth, windowHeight);
 
-	//3D Cube verteces
-	Vertex vertices[] =
-	{  //positions							//texture coords
-	   // Back
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	   // Front
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	   // Left
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	   // Right
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	   // Bottom
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f,  0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),glm::vec2(0.0f, 1.0f)},
-	   // Top
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-	  Vertex{glm::vec3(0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-	  Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-	};
-
 	Texture textures[] =
 	{
 		Texture("Dirt_Block.png", "block", 0, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)
 	};
+	std::vector<Texture> textureVectors(textures, textures + sizeof(textures) / sizeof(Texture)); //TODO:: Texture Atlas
 
 	Shader shaderProgram("default.vert", "default.frag");
 	
 	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
 
-	Chunk chunk(shaderProgram);
+	Chunk chunk(3, 3, 3, textureVectors);
 
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
@@ -133,12 +87,13 @@ int main() {
 		camera.setMatrix(shaderProgram, "cameraMatrix");
 
 		//chunk
-		chunk.GenerateChunk(20, 20, 30);
+		chunk.generateBlocks(shaderProgram);
 
 		//update window
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
 	shaderProgram.Delete();
 
 	glfwDestroyWindow(window);
