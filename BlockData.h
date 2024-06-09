@@ -24,7 +24,7 @@ enum class BlockFaces
 
 using FaceVertices = std::array<Vertex, 6>;
 
-inline std::map<BlockFaces, FaceVertices> BlockFaceVertices = {
+inline std::map<BlockFaces, FaceVertices> RawFaceVertices = {
 	{BlockFaces::FRONT, {
 		Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
 		Vertex{glm::vec3(0.5f, -0.5f, 0.5),		glm::vec2(1.0f, 0.0f)},
@@ -74,11 +74,5 @@ inline std::map<BlockFaces, FaceVertices> BlockFaceVertices = {
 		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
 	}}
 };
-
-inline std::vector<Vertex> convertVertexToVector(BlockFaces face)
-{
-	const auto& faceVertices = BlockFaceVertices[face];
-	return std::vector<Vertex>(faceVertices.begin(), faceVertices.end());
-}
 
 #endif

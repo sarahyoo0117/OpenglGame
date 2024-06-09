@@ -1,43 +1,35 @@
 #include "Voxel.h"
 
-Voxel::Voxel(glm::vec3 position, BlockType blockType)
+Voxel::Voxel(glm::vec3 position, BlockType blockType) : position(position), type(blockType) 
 {
-	this->position = position;
-	this->type = blockType;
+	this->blockFaceVertices = new std::map<BlockFaces, FaceVertices>{
+		{ BlockFaces::FRONT, transformedVertices(RawFaceVertices[BlockFaces::FRONT]) },
+		{ BlockFaces::BACK, transformedVertices(RawFaceVertices[BlockFaces::BACK]) },
+		{ BlockFaces::LEFT, transformedVertices(RawFaceVertices[BlockFaces::LEFT]) },
+		{ BlockFaces::RIGHT, transformedVertices(RawFaceVertices[BlockFaces::RIGHT]) },
+		{ BlockFaces::TOP, transformedVertices(RawFaceVertices[BlockFaces::TOP]) },
+		{ BlockFaces::BOTTOM, transformedVertices(RawFaceVertices[BlockFaces::BOTTOM]) }
+	};
 }
 
-void Voxel::Draw(Shader& shader, std::vector<Vertex>& vertices, std::vector<Texture>& textures)
+FaceVertices Voxel::transformedVertices (FaceVertices vertices)
 {
-	this->VAO.Bind();
-	
-	VBO VBO(vertices);
+	FaceVertices transformedVertices;
 
-	this->VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(Vertex), (void*)0);
-	this->VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
-
-	VBO.Unbind();
-
-	shader.Activate();
-
-
-	int blockNum = 0;
-	for (int i = 0; i < textures.size(); i++)
+	int i = 0;
+	for (const auto& vertex : vertices)
 	{
-		std::string num;
-		std::string name = textures[i].name;
-		if (name == "block")
-		{
-			num = std::to_string(blockNum++);
-		}
-		textures[i].setTextureUnit(shader, (name + num).c_str(), i);
-		textures[i].Bind();
+		Vertex transformedVertex;
+		transformedVertex.Position = vertex.Position * this->position;
+		transformedVertex.TexCoords = vertex.TexCoords;
+		transformedVertices[i] = transformedVertex;
+		i++;
 	}
 
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, position);
-	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
-	glUniform1f(glGetUniformLocation(shader.ID, "scale"), 1.0);
-
-	glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+	return transformedVertices;
 }
 
+FaceVertices Voxel::getFaceVertices(BlockFaces face)
+{
+	return (*this->blockFaceVertices)[face];
+}

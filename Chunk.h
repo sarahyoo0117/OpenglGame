@@ -12,19 +12,24 @@
 class Chunk
 {
 private:
+	VAO VAO;
 	int WIDTH;
 	int HEIGHT;
 	int DEPTH;
 	double** heightMap;
 	std::vector<Vertex> chunkVertices;
-	std::vector<std::vector<std::vector<Voxel>>> chunkBlocks;
-
+	std::vector<std::vector<std::vector<Voxel*>>> chunkBlocks;
 	std::vector<Texture> textures; //TODO
+
+	double** generateChunk();
+	std::vector<Vertex> convertVerticesToVector(FaceVertices faceVertices);
+	void integrateFace(Voxel* block, BlockFaces face);
+	void generateBlocks();
+	void buildChunk();
+
 public:
 	Chunk(int width, int height, int depth, std::vector<Texture>& textures);
-	double** generateChunk();
-	void integrateFace(Shader& shader, Voxel& block, BlockFaces face);
-	void generateBlocks(Shader& shader);
+	void render(Shader& shader);
 };
 
 #endif

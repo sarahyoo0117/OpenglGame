@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <vector>
 #include "Shader.h"
@@ -13,15 +13,20 @@
 #include "VBO.h"
 #include "BlockData.h"
 
+
 class Voxel
 {
 private:
-	VAO VAO;
-	BlockType type;
-	glm::vec3 position;
+	std::map<BlockFaces, FaceVertices>* blockFaceVertices;
+
+	FaceVertices transformedVertices(FaceVertices vertices);
+
 public:
+	glm::vec3 position;
+	BlockType type;
+
 	Voxel(glm::vec3 position, BlockType blockType = BlockType::EMPTY);
-	void Draw(Shader& shader, std::vector<Vertex>& vertices, std::vector<Texture>& textures);
+	FaceVertices getFaceVertices(BlockFaces face);
 };
 
 #endif

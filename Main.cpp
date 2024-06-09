@@ -40,15 +40,13 @@ int main() {
 	std::vector<Texture> textureVectors(textures, textures + sizeof(textures) / sizeof(Texture)); //TODO:: Texture Atlas
 
 	Shader shaderProgram("default.vert", "default.frag");
-	
 	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
-
-	Chunk chunk(3, 3, 3, textureVectors);
+	Chunk chunk(16, 16, 16, textureVectors);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	//glEnable(GL_CULL_FACE);
+	//glCullFace(GL_BACK);
+	//glFrontFace(GL_CCW);
 
 	double prevTime = 0.0;
 	double crntTime = 0.0;
@@ -87,7 +85,7 @@ int main() {
 		camera.setMatrix(shaderProgram, "cameraMatrix");
 
 		//chunk
-		chunk.generateBlocks(shaderProgram);
+		chunk.render(shaderProgram);
 
 		//update window
 		glfwSwapBuffers(window);
