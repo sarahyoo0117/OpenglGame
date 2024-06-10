@@ -20,7 +20,7 @@ FaceVertices Voxel::transformedVertices (FaceVertices vertices)
 	for (const auto& vertex : vertices)
 	{
 		Vertex transformedVertex;
-		transformedVertex.Position = vertex.Position * this->position;
+		transformedVertex.Position = vertex.Position + this->position;
 		transformedVertex.TexCoords = vertex.TexCoords;
 		transformedVertices[i] = transformedVertex;
 		i++;

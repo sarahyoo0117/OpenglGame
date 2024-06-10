@@ -9,16 +9,13 @@ float deltaTime, lastFrame = 0.0f;
 
 
 int main() {
-	//initialize GLFW
 	glfwInit();
 
-	//Tell GLFW what version of OpenGl we are using. --> we are using 3.3
+	//we are using OpenGL 3.3 version
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	//Tell GLFW we are using core profile, meaning we are only using the modern function.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	
-	//Creates window
 	GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "My OpenGl Game", NULL, NULL);
 
 	if (window == NULL) {
@@ -27,9 +24,7 @@ int main() {
 		return -1;
 	}
 
-	//adds the window to the current context
 	glfwMakeContextCurrent(window);
-	//setup gl viewport
 	gladLoadGL();
 	glViewport(0, 0, windowWidth, windowHeight);
 
@@ -44,9 +39,9 @@ int main() {
 	Chunk chunk(16, 16, 16, textureVectors);
 
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_CULL_FACE);
-	//glCullFace(GL_BACK);
-	//glFrontFace(GL_CCW);
+	glFrontFace(GL_CCW);
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
 
 	double prevTime = 0.0;
 	double crntTime = 0.0;
@@ -76,15 +71,13 @@ int main() {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
-		camera.speed = 25.0f * deltaTime; //TODO
-		//std::cout << camera.speed << std::endl;
+		camera.speed = 25.0f * deltaTime; //TODO: ?
 
 		camera.updateMatrix(fovAngle, 0.1f, 100.0f);
 		camera.processKeyboardInputs(window);
 		camera.processMouseInputs(window);
 		camera.setMatrix(shaderProgram, "cameraMatrix");
 
-		//chunk
 		chunk.render(shaderProgram);
 
 		//update window

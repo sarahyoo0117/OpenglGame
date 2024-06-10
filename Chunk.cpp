@@ -4,7 +4,7 @@ Chunk::Chunk(int width, int height, int depth, std::vector<Texture>& textures)
 	: WIDTH(width), HEIGHT(height), DEPTH(depth), textures(textures)
 {
 	this->heightMap = generateChunk();
-	this->chunkBlocks.resize(width, std::vector<std::vector<Voxel*>>(height, std::vector<Voxel*>(depth, nullptr))); //TODO
+	this->chunkBlocks.resize(width, std::vector<std::vector<Voxel*>>(depth, std::vector<Voxel*>(height, nullptr))); //TODO
 	generateBlocks();
 	buildChunk();
 }
@@ -24,8 +24,7 @@ double** Chunk::generateChunk() {
 	{
 		for (int z = 0; z < HEIGHT; z++)
 		{
-			heightMap[x][z] = perlin.octave2D_01(x, z, 4) * 10; //TODO::adjust number
-			//std::cout << heightMap[x][z]  << std::endl;
+			heightMap[x][z] = perlin.octave2D_01(x, z, 4) * 10; //TODO::fix perlin noise
 		}
 	}
 	return heightMap;
@@ -39,7 +38,7 @@ std::vector<Vertex> Chunk::convertVerticesToVector(FaceVertices faceVertices)
 void Chunk::integrateFace(Voxel* block, BlockFaces face)
 {
 	std::vector<Vertex> faceVertices = convertVerticesToVector(block->getFaceVertices(face));
-	this->chunkVertices.insert(chunkVertices.begin(), faceVertices.begin(), faceVertices.end()); //TODO: Face Culling?
+	this->chunkVertices.insert(chunkVertices.begin(), faceVertices.begin(), faceVertices.end()); 
 }
 
 void Chunk::generateBlocks()
@@ -48,19 +47,18 @@ void Chunk::generateBlocks()
 	{
 		for (int z = 0; z < HEIGHT; z++)
 		{
-			int columnHeight = (int)(heightMap[x][z]); //TODO:: generate chunk using peril noise
-			std::cout << columnHeight << std::endl;
+			int columnHeight = (int)(heightMap[x][z]);
 			for (int y = 0; y < DEPTH; y++)
 			{
 				if (y < columnHeight)
 				{
-					delete chunkBlocks[x][z][y];
-					chunkBlocks[x][z][y] = new Voxel(glm::vec3(x, y, z), BlockType::DIRT);
+					delete chunkBlocks[x][y][z];
+					chunkBlocks[x][y][z] = new Voxel(glm::vec3(x, y, z), BlockType::DIRT);
 				}
 				else
 				{
-					delete chunkBlocks[x][z][y];
-					chunkBlocks[x][z][y] = new Voxel(glm::vec3(x, y, z), BlockType::EMPTY);
+					delete chunkBlocks[x][y][z];
+					chunkBlocks[x][y][z] = new Voxel(glm::vec3(x, y, z), BlockType::EMPTY);
 				}
 			}
 		}
@@ -73,10 +71,86 @@ void Chunk::buildChunk()
 	{
 		for (int z = 0; z < HEIGHT; z++)
 		{
-			for (int y = 0; y < DEPTH; y++)
+			int columnHeight = (int)(heightMap[x][z]);
+			for (int y = 0; y < columnHeight; y++) 
 			{
-				//TODO: check qualifications and draw faces
+				//left faces: block to left is empty & not farthest left in the chunk
+				if (x > 0)
+				{
+					if (chunkBlocks[x - 1][y][z]->type == BlockType::EMPTY)
+					{
+						integrateFace(chunkBlocks[x][y][z], BlockFaces::LEFT);
+					}
+				}
+				else
+				{
+					integrateFace(chunkBlocks[x][y][z], BlockFaces::LEFT);
+				}
 
+				//right faces: block to right is empty & farthest right in chunk
+				if (x < WIDTH - 1)
+				{
+					if (chunkBlocks[x + 1][y][z]->type == BlockType::EMPTY)
+					{
+						integrateFace(chunkBlocks[x][y][z], BlockFaces::RIGHT);
+					}
+				}
+				else
+				{
+					integrateFace(chunkBlocks[x][y][z], BlockFaces::RIGHT);
+				}
+
+				//top faces: block above is empty & fartest up in chunk
+				if (y < columnHeight - 1)
+				{
+					if (chunkBlocks[x][y + 1][z]->type == BlockType::EMPTY)
+					{
+						integrateFace(chunkBlocks[x][y][z], BlockFaces::TOP);
+					}
+				}
+				else
+				{
+					integrateFace(chunkBlocks[x][y][z], BlockFaces::TOP);
+				}
+
+				//bottom faces: block below is empty & farthes down in chunk
+				if (y > 0)
+				{
+					if (chunkBlocks[x][y - 1][z]->type == BlockType::EMPTY)
+					{
+						integrateFace(chunkBlocks[x][y][z], BlockFaces::BOTTOM);
+					}
+				}
+				else
+				{
+					integrateFace(chunkBlocks[x][y][z], BlockFaces::BOTTOM);
+				}
+
+				//front faces
+				if (z < HEIGHT - 1)
+				{
+					if (chunkBlocks[x][y][z + 1]->type == BlockType::EMPTY)
+					{
+						integrateFace(chunkBlocks[x][y][z], BlockFaces::FRONT);
+					}
+				}
+				else
+				{
+					integrateFace(chunkBlocks[x][y][z], BlockFaces::FRONT);
+				}
+
+				//back faces
+				if (z > 0)
+				{
+					if (chunkBlocks[x][y][z - 1]->type == BlockType::EMPTY)
+					{
+						integrateFace(chunkBlocks[x][y][z], BlockFaces::BACK);
+					}
+				}
+				else
+				{
+					integrateFace(chunkBlocks[x][y][z], BlockFaces::BACK);
+				}
 			}
 		}
 	}
