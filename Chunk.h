@@ -7,6 +7,7 @@
 #include "Texture.h"
 #include "Voxel.h"
 #include "BlockData.h"
+#include "TextureData.h"
 #include "PerlinNoise/PerlinNoise.hpp"
 
 class Chunk
@@ -19,7 +20,6 @@ private:
 	double** heightMap;
 	std::vector<Vertex> chunkVertices;
 	std::vector<std::vector<std::vector<Voxel*>>> chunkBlocks;
-	std::vector<Texture> textures; //TODO
 
 	double** generateChunk();
 	std::vector<Vertex> convertVerticesToVector(FaceVertices faceVertices);
@@ -28,8 +28,8 @@ private:
 	void buildChunk();
 
 public:
-	Chunk(int width, int height, int depth, std::vector<Texture>& textures);
-	void render(Shader& shader);
+	Chunk(int width, int height, int depth);
+	void render();
 };
 
 #endif

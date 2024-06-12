@@ -28,15 +28,14 @@ int main() {
 	gladLoadGL();
 	glViewport(0, 0, windowWidth, windowHeight);
 
-	Texture textures[] =
-	{
-		Texture("Dirt_Block.png", "block", 0, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE)
-	};
-	std::vector<Texture> textureVectors(textures, textures + sizeof(textures) / sizeof(Texture)); //TODO:: Texture Atlas
-
 	Shader shaderProgram("default.vert", "default.frag");
+
+	Texture TerrainTexture("Terrain.png", 0, GL_TEXTURE_2D, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	TerrainTexture.setTextureUnit(shaderProgram, "terrainTex");
+	TerrainTexture.Bind();
+	
 	Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 3.0f));
-	Chunk chunk(16, 16, 16, textureVectors);
+	Chunk chunk(16, 16, 16);
 
 	glEnable(GL_DEPTH_TEST);
 	glFrontFace(GL_CCW);
@@ -78,7 +77,8 @@ int main() {
 		camera.processMouseInputs(window);
 		camera.setMatrix(shaderProgram, "cameraMatrix");
 
-		chunk.render(shaderProgram);
+
+		chunk.render();
 
 		//update window
 		glfwSwapBuffers(window);

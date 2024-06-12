@@ -4,12 +4,12 @@
 #include <vector>
 #include <map>
 #include <array>
-#include "Texture.h"
 
 enum class BlockType 
 {
+	EMPTY,
 	DIRT,
-	EMPTY
+	GRASS
 };
 
 enum class BlockFaces 
@@ -23,56 +23,58 @@ enum class BlockFaces
 };
 
 using FaceVertices = std::array<Vertex, 6>;
+using FacePosCoords = std::array<glm::vec3, 6>;
 
-inline std::map<BlockFaces, FaceVertices> RawFaceVertices = {
+inline std::map<BlockFaces, FacePosCoords> FacePositionCoordinates = {
 	{BlockFaces::FRONT, {
-		Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, 0.5),		glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, 0.5f),		glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, 0.5f),		glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+		glm::vec3(-0.5f, -0.5f, 0.5f),	
+		glm::vec3(0.5f, -0.5f, 0.5),	
+		glm::vec3(0.5f, 0.5f, 0.5f),	
+		glm::vec3(0.5f, 0.5f, 0.5f),	
+		glm::vec3(-0.5f, 0.5f, 0.5f),	
+		glm::vec3(-0.5f, -0.5f, 0.5f),
 	}},
 	{BlockFaces::BACK, {
-		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 0.0f)},
-		Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
+		glm::vec3(-0.5f, -0.5f, -0.5f),	
+		glm::vec3(0.5f, 0.5f, -0.5f),	
+		glm::vec3(0.5f, -0.5f, -0.5f),	
+		glm::vec3(0.5f, 0.5f, -0.5f),	
+		glm::vec3(-0.5f, -0.5f, -0.5f),	
+		glm::vec3(-0.5f, 0.5f, -0.5f),	
 	}},
 	{BlockFaces::LEFT, {
-		Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-		Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
+		glm::vec3(-0.5f, 0.5f, 0.5f),	
+		glm::vec3(-0.5f, 0.5f, -0.5f),	
+		glm::vec3(-0.5f, -0.5f, -0.5f),	
+		glm::vec3(-0.5f, -0.5f, -0.5f),	
+		glm::vec3(-0.5f, -0.5f, 0.5f),	
+		glm::vec3(-0.5f, 0.5f, 0.5f),	
 	}},
 	{BlockFaces::RIGHT, {
-		Vertex{glm::vec3(0.5f, 0.5f, 0.5f),		glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, 0.5f),		glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+		glm::vec3(0.5f, 0.5f, 0.5f),		
+		glm::vec3(0.5f, -0.5f, -0.5f),	
+		glm::vec3(0.5f, 0.5f, -0.5f),	
+		glm::vec3(0.5f, -0.5f, -0.5f),	
+		glm::vec3(0.5f, 0.5f, 0.5f),		
+		glm::vec3(0.5f, -0.5f, 0.5f),	
 	}},
 	{BlockFaces::TOP, {
-		Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, 0.5f),		glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, 0.5f, 0.5f),		glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(-0.5f, 0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(-0.5f, 0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
+		glm::vec3(-0.5f, 0.5f, -0.5f),	
+		glm::vec3(0.5f, 0.5f, 0.5f),		
+		glm::vec3(0.5f, 0.5f, -0.5f),	
+		glm::vec3(0.5f, 0.5f, 0.5f),		
+		glm::vec3(-0.5f, 0.5f, -0.5f),	
+		glm::vec3(-0.5f, 0.5f, 0.5f),	
 	}},
 	{BlockFaces::BOTTOM, {
-		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, -0.5f),	glm::vec2(1.0f, 1.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f,  0.5f),	glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(0.5f, -0.5f, 0.5f),	glm::vec2(1.0f, 0.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, 0.5f),	glm::vec2(0.0f, 0.0f)},
-		Vertex{glm::vec3(-0.5f, -0.5f, -0.5f),	glm::vec2(0.0f, 1.0f)},
+		glm::vec3(-0.5f, -0.5f, -0.5f),	
+		glm::vec3(0.5f, -0.5f, -0.5f),	
+		glm::vec3(0.5f, -0.5f,  0.5f),	
+		glm::vec3(0.5f, -0.5f, 0.5f),	
+		glm::vec3(-0.5f, -0.5f, 0.5f),	
+		glm::vec3(-0.5f, -0.5f, -0.5f),	
 	}}
 };
+
 
 #endif

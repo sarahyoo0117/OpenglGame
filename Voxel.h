@@ -12,6 +12,7 @@
 #include "VAO.h"
 #include "VBO.h"
 #include "BlockData.h"
+#include "TextureData.h"
 
 
 class Voxel
@@ -19,7 +20,7 @@ class Voxel
 private:
 	std::map<BlockFaces, FaceVertices>* blockFaceVertices;
 
-	FaceVertices transformedVertices(FaceVertices vertices);
+	FaceVertices transformedVertices(FacePosCoords posCoords, FaceTexCoords texCoords);
 
 public:
 	glm::vec3 position;

@@ -1,10 +1,10 @@
 #include "Chunk.h"
 
-Chunk::Chunk(int width, int height, int depth, std::vector<Texture>& textures) 
-	: WIDTH(width), HEIGHT(height), DEPTH(depth), textures(textures)
+Chunk::Chunk(int width, int height, int depth) 
+	: WIDTH(width), HEIGHT(height), DEPTH(depth)
 {
 	this->heightMap = generateChunk();
-	this->chunkBlocks.resize(width, std::vector<std::vector<Voxel*>>(depth, std::vector<Voxel*>(height, nullptr))); //TODO
+	this->chunkBlocks.resize(width, std::vector<std::vector<Voxel*>>(depth, std::vector<Voxel*>(height, nullptr)));
 	generateBlocks();
 	buildChunk();
 }
@@ -50,16 +50,18 @@ void Chunk::generateBlocks()
 			int columnHeight = (int)(heightMap[x][z]);
 			for (int y = 0; y < DEPTH; y++)
 			{
-				if (y < columnHeight)
+				BlockType type = BlockType::EMPTY;
+				if (y == columnHeight)
 				{
-					delete chunkBlocks[x][y][z];
-					chunkBlocks[x][y][z] = new Voxel(glm::vec3(x, y, z), BlockType::DIRT);
+					type = BlockType::GRASS;
 				}
-				else
+				else if (y < columnHeight)
 				{
-					delete chunkBlocks[x][y][z];
-					chunkBlocks[x][y][z] = new Voxel(glm::vec3(x, y, z), BlockType::EMPTY);
+					type = BlockType::DIRT;
 				}
+
+				delete chunkBlocks[x][y][z];
+				chunkBlocks[x][y][z] = new Voxel(glm::vec3(x, y, z), type);
 			}
 		}
 	}
@@ -71,93 +73,95 @@ void Chunk::buildChunk()
 	{
 		for (int z = 0; z < HEIGHT; z++)
 		{
-			int columnHeight = (int)(heightMap[x][z]);
-			for (int y = 0; y < columnHeight; y++) 
+			for (int y = 0; y < DEPTH; y++) 
 			{
-				//left faces: block to left is empty & not farthest left in the chunk
-				if (x > 0)
+				if (chunkBlocks[x][y][z]->type != BlockType::EMPTY)
 				{
-					if (chunkBlocks[x - 1][y][z]->type == BlockType::EMPTY)
+					//left faces: block to left is empty & not farthest left in the chunk
+					if (x > 0)
+					{
+						if (chunkBlocks[x - 1][y][z]->type == BlockType::EMPTY)
+						{
+							integrateFace(chunkBlocks[x][y][z], BlockFaces::LEFT);
+						}
+					}
+					else
 					{
 						integrateFace(chunkBlocks[x][y][z], BlockFaces::LEFT);
 					}
-				}
-				else
-				{
-					integrateFace(chunkBlocks[x][y][z], BlockFaces::LEFT);
-				}
 
-				//right faces: block to right is empty & farthest right in chunk
-				if (x < WIDTH - 1)
-				{
-					if (chunkBlocks[x + 1][y][z]->type == BlockType::EMPTY)
+					//right faces: block to right is empty & farthest right in chunk
+					if (x < WIDTH - 1)
+					{
+						if (chunkBlocks[x + 1][y][z]->type == BlockType::EMPTY)
+						{
+							integrateFace(chunkBlocks[x][y][z], BlockFaces::RIGHT);
+						}
+					}
+					else
 					{
 						integrateFace(chunkBlocks[x][y][z], BlockFaces::RIGHT);
 					}
-				}
-				else
-				{
-					integrateFace(chunkBlocks[x][y][z], BlockFaces::RIGHT);
-				}
 
-				//top faces: block above is empty & fartest up in chunk
-				if (y < columnHeight - 1)
-				{
-					if (chunkBlocks[x][y + 1][z]->type == BlockType::EMPTY)
+					//top faces: block above is empty & fartest up in chunk
+					if (y < DEPTH - 1)
+					{
+						if (chunkBlocks[x][y + 1][z]->type == BlockType::EMPTY)
+						{
+							integrateFace(chunkBlocks[x][y][z], BlockFaces::TOP);
+						}
+					}
+					else
 					{
 						integrateFace(chunkBlocks[x][y][z], BlockFaces::TOP);
 					}
-				}
-				else
-				{
-					integrateFace(chunkBlocks[x][y][z], BlockFaces::TOP);
-				}
 
-				//bottom faces: block below is empty & farthes down in chunk
-				if (y > 0)
-				{
-					if (chunkBlocks[x][y - 1][z]->type == BlockType::EMPTY)
+					//bottom faces: block below is empty & farthes down in chunk
+					if (y > 0)
+					{
+						if (chunkBlocks[x][y - 1][z]->type == BlockType::EMPTY)
+						{
+							integrateFace(chunkBlocks[x][y][z], BlockFaces::BOTTOM);
+						}
+					}
+					else
 					{
 						integrateFace(chunkBlocks[x][y][z], BlockFaces::BOTTOM);
 					}
-				}
-				else
-				{
-					integrateFace(chunkBlocks[x][y][z], BlockFaces::BOTTOM);
-				}
 
-				//front faces
-				if (z < HEIGHT - 1)
-				{
-					if (chunkBlocks[x][y][z + 1]->type == BlockType::EMPTY)
+					//front faces
+					if (z < HEIGHT - 1)
+					{
+						if (chunkBlocks[x][y][z + 1]->type == BlockType::EMPTY)
+						{
+							integrateFace(chunkBlocks[x][y][z], BlockFaces::FRONT);
+						}
+					}
+					else
 					{
 						integrateFace(chunkBlocks[x][y][z], BlockFaces::FRONT);
 					}
-				}
-				else
-				{
-					integrateFace(chunkBlocks[x][y][z], BlockFaces::FRONT);
-				}
 
-				//back faces
-				if (z > 0)
-				{
-					if (chunkBlocks[x][y][z - 1]->type == BlockType::EMPTY)
+					//back faces
+					if (z > 0)
+					{
+						if (chunkBlocks[x][y][z - 1]->type == BlockType::EMPTY)
+						{
+							integrateFace(chunkBlocks[x][y][z], BlockFaces::BACK);
+						}
+					}
+					else
 					{
 						integrateFace(chunkBlocks[x][y][z], BlockFaces::BACK);
 					}
-				}
-				else
-				{
-					integrateFace(chunkBlocks[x][y][z], BlockFaces::BACK);
 				}
 			}
 		}
 	}
 }
 
-void Chunk::render(Shader& shader)
-{
+void Chunk::render()
+{	
 	//draw faces
 	this->VAO.Bind();
 
@@ -167,21 +171,6 @@ void Chunk::render(Shader& shader)
 	this->VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(Vertex), (void*)(3 * sizeof(float)));
 
 	VBO.Unbind();
-
-	shader.Activate();
-
-	int blockNum = 0;
-	for (int i = 0; i < textures.size(); i++)
-	{
-		std::string num;
-		std::string name = textures[i].name;
-		if (name == "block")
-		{
-			num = std::to_string(blockNum++);
-		}
-		textures[i].setTextureUnit(shader, (name + num).c_str(), i);
-		textures[i].Bind();
-	}
 
 	glDrawArrays(GL_TRIANGLES, 0, this->chunkVertices.size());
 }
